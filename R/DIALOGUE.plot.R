@@ -25,20 +25,26 @@
 #' @export
 #'
 
-DIALOGUE.plot<-function(R,results.dir = "~/Desktop/DIALOGUE.results/",
+DIALOGUE.plot<-function(R,results.dir = "~/Desktop/DIALOGUE.results/",show_plot= F,
                         pheno = NULL,mark.samples = NULL,metadata = NULL,d = 1, MCPs = 1:R$k["DIALOGUE"]){
   
-  pdf(paste0(results.dir,"/",R$name,".pdf"))
+  if(!show_plot){
+    pdf(paste0(results.dir,"/",R$name,".pdf"))
+  }
   DIALOGUE.plot.av(R,mark.samples = mark.samples,metadata = metadata,d = d,MCPs = MCPs)
   DIALOGUE.plot.sig.comp(R)
   if(!is.null(pheno)){
     DIALOGUE.violin.pheno(R,pheno = pheno,MCPs = MCPs,d = d)
   }
-  dev.off();par(font.axis = 2);par(font.lab = 2);par(font = 2)
+  if(!show_plot){
+    dev.off();par(font.axis = 2);par(font.lab = 2);par(font = 2)
+  }
+  
+  
 }
 
 DIALOGUE.plot.av<-function(R,MCPs,mark.samples = NULL,d = 1,k = R$k["DIALOGUE"],
-                           select.samples = NULL,averaging.function = colMeans,metadata = NULL){
+                           select.samples = NULL,averaging.function = colMeans,metadata = NULL, show_plot=T){
   R$scoresAv<-lapply(R$scores,function(m) average.mat.rows(as.matrix(m[,1:k]),
                                                            m$samples,f = R$param$averaging.function))
   idx<-unlist(lapply(R$scoresAv, function(m) rownames(m)))
@@ -113,10 +119,10 @@ DIALOGUE.plot.sig.comp<-function(R,main = ""){
   if(all(m2["> 2 cell types",]==0)){m2<-m2[1:(nrow(m2)-1),]}
   m1<-melt(m2)
   colnames(m1)<-c("col","x","y")
-  p<-ggplot(data=m1, aes(x=x, y=y, fill=col))+geom_bar(stat="identity")+
+  p<-ggplot(data=m1, aes(x=x, y=y, fill=col))+geom_bar(stat="identity", color="grey20")+
     labs(fill = "Cell type(s)", x = "Program", y = "No. of genes")
   p<-p+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-             panel.background = element_blank(), axis.line = element_line(colour = "black"))
+             panel.background = element_blank(), axis.line = element_line(colour = "black")) 
   p<-p+theme(text = element_text(size=12),axis.text.x = element_text(angle=45, hjust=1))
   multiplot.util(list(NULL,p,NULL),cols = 1,nplots = 3)
   return(m2)
