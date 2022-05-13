@@ -13,7 +13,8 @@
 #' @param add.effects whether to add additional covariates to the multilevel model;
 #' if TRUE then the covariates will extracted from the [conf] slot in the \linkS4class{cell.type} objects;
 #' default is FALSE.
-#' 
+#' @param full.version saves temporary rds files for intermediate steps of the pipeline. Default to FALSE.
+#'
 #' @return A list with the following components:
 #' @return sig -  the multicellular programs, given as a list of signatures;
 #' @return scores - the multicellular programs' scores in each cell;
@@ -29,8 +30,9 @@
 DIALOGUE.run<-function(rA,main,k = 3,results.dir = getwd(),plot.flag = T,pheno = NULL,
                        PMD2 = F,conf = "cellQ",covar = c("cellQ","tme.qc"),n.genes = 200,
                        averaging.function = colMedians,p.anova = 0.05,specific.pair = NULL,
-                       parallel.vs = F,center.flag = T,extra.sparse = F, bypass.emp = F, abn.c = 15, spatial.flag = F){
-  full.version <- F
+                       parallel.vs = F,center.flag = T,extra.sparse = F, bypass.emp = F, abn.c = 15, spatial.flag = F,
+                       full.version =F ){
+  #full.version <- F
   names(rA)<-laply(rA,function(r) r@name)
   if(!grepl("\\/$", results.dir)){results.dir <- paste(results.dir, "/", sep = "")}
   R<-DIALOGUE1(rA = rA,k = k,main = main,
@@ -492,7 +494,7 @@ DIALOGUE3<-function(rA,main,results.dir = "~/Desktop/DIALOGUE.results/",full.ver
   rownames(R$cca.fit)<-R$cell.types
   
   fileName<-paste0(results.dir,"DLG.full.output_",main,".rds")
-  # if(full.version){saveRDS(R,file = fileName)}
+  if(full.version){saveRDS(R,file = fileName)}
   
   if(!is.null(pheno)){R$phenoZ<-DIALOGUE.pheno(R,pheno = pheno)}
   if(full.version){saveRDS(R,file = fileName)}
