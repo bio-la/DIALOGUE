@@ -74,8 +74,8 @@ DIALOGUE.plot.av<-function(R,MCPs,mark.samples = NULL,d = 1,k = R$k["DIALOGUE"],
     if(length(R$MCP.cell.types[[i]])<2){return()}
     pairs.panels(m1,hist.col = "grey",breaks = 50,bg = col1,pch = pch,ellipses = F,
                  smooth = F,lm = T,stars = T,method = "pearson",
-                 cex = size1,cex.cor = 1)
-    title(i)
+                 cex = size1,cex.cor = 1, main = paste0("MCP",i))
+    #title(i)
     return(m1)
   }
   if(missing(MCPs)){
@@ -145,7 +145,7 @@ DIALOGUE.violin.pheno<-function(R,pheno = "pathology",MCPs,selected.samples,d = 
     b<-is.element(X$cell.type,R$MCP.cell.types[[x]])
     violin.split(scores = d*X[b,x],treatment = X[b,pheno],
                  conditions = X$id[b],
-                 main = x)
+                 main = paste0("MCP",x))
     return(x)
   }
   if(missing(MCPs)){MCPs<-paste0("MCP",1:k)}
@@ -225,7 +225,8 @@ multiplot<-function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 
 violin.split<-function(scores, treatment, conditions, main = "",
                        xlab = "Sample",ylab = "Scores",legend.flag = T,show.pval = T){
-  # require(beanplot)
+  if (!require("beanplot", quietly = TRUE))
+    install.packages("beanplot")
   if(length(unique(conditions))==1){
     p<-t.test.mat(m = rbind(scores,scores),b = treatment == sort(treatment,decreasing = T)[1])[1,1]
   }else{
