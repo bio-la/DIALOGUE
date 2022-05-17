@@ -100,7 +100,7 @@ DIALOGUE1<-function(rA,k = 5,main,results.dir = "~/Desktop/DIALOGUE.results/",co
                     seed1 = 1234,bypass.emp = F,abn.c = 15,spatial.flag = F){
   
   print("#************DIALOGUE Step I: PMD ************#")
-  dir.create(results.dir, show.warings=FALSE, recursive=TRUE)
+  dir.create(results.dir, show.warnings=FALSE, recursive=TRUE)
   if(!grepl("\\/$", results.dir)){results.dir <- paste(results.dir, "/", sep = "")}
   X<-lapply(rA, function(r){
     X1<-average.mat.rows(r@X,r@samples,f = averaging.function)
